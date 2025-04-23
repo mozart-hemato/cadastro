@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Pacientes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fbeaea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="date"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    input[type="submit"] {
+      margin-top: 20px;
+      width: 100%;
+      background-color: #007BFF;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+    #mensagem {
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Cadastro de Pacientes</h2>
+    <form id="formulario">
+      <label>Nome completo:</label>
+      <input type="text" name="nome" required>
+
+      <label>Data de nascimento:</label>
+      <input type="date" name="nascimento" id="nascimento" required onchange="calcularIdade()">
+
+      <label>Idade:</label>
+      <input type="number" name="idade" id="idade" readonly required>
+
+      <label>Email:</label>
+      <input type="email" name="email">
+
+      <label>Telefone:</label>
+      <input type="text" name="telefone">
+
+      <label>Diagnóstico:</label>
+      <input type="text" name="diagnostico">
+
+      <input type="submit" value="Enviar">
+    </form>
+
+    <div id="mensagem">Cadastro enviado com sucesso!</div>
+  </div>
+
+  <script>
+    function calcularIdade() {
+      const nascimento = document.getElementById('nascimento').value;
+      if (nascimento) {
+        const hoje = new Date();
+        const dataNasc = new Date(nascimento);
+        let idade = hoje.getFullYear() - dataNasc.getFullYear();
+        const m = hoje.getMonth() - dataNasc.getMonth();
+        if (m < 0 || (m === 0 && hoje.getDate() < dataNasc.getDate())) {
+          idade--;
+        }
+        document.getElementById('idade').value = idade;
+      }
+    }
+
+    document.getElementById("formulario").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      fetch("https://script.google.com/macros/s/AKfycbx6bdPTQcEEMwoVfkUKQIW-dwpRGPCQI6TNeji2apBIb-yGv-RsjHviGAGnJCZ1cGyd/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById("mensagem").style.display = "block";
+          this.reset();
+          document.getElementById("idade").value = "";
+        } else {
+          alert("Erro ao enviar o formulário. Tente novamente.");
+        }
+      })
+      .catch(() => {
+        alert("Erro de conexão. Verifique sua internet.");
+      });
+    });
+  </script>
+</body>
+</html>
